@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Projeto_donuz.Model;
+using Projeto_donuz.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<ConexãoBanco>(x => x.UseSqlite("Data source = Projeto donuz"));
+builder.Services.AddDbContext<ClienteContext>(x => x.UseSqlite("Data source = Projeto donuz"));
+builder.Services.AddScoped<IClienteRepositories, ClienteRepositories>();
 
 var app = builder.Build();
 
