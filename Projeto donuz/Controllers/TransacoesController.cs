@@ -16,8 +16,7 @@ namespace Projeto_donuz.Controllers
             new Cliente { Id = 2, Name = "Cliente 2", Saldo = 500}
         };
 
-        public object Public { get; private set; }
-
+        
         [HttpPost("credito")]
         public IActionResult Creditar(int clienteId, decimal valor)
         {
@@ -49,7 +48,7 @@ namespace Projeto_donuz.Controllers
 
             if (cliente.Saldo < valor)
             {
-                return BadRequest("Saldo insufuciente");
+                return BadRequest("Você não possue saldo suficiente para esta transação");
             }
 
             cliente.Saldo -= valor;
