@@ -38,24 +38,38 @@ namespace Projeto_donuz.Controllers
         {
             var clienteToDelete = await _clienteRepositories.GetById(id);
            
-                if (clienteToDelete != null)
-                    return NotFound();
+            if (clienteToDelete != null)
+            {
+                return NotFound();
+            }                    
 
-                await _clienteRepositories.DeleteById(clienteToDelete.Id);
-                return NoContent();
-            
-           
+            await _clienteRepositories.DeleteById(clienteToDelete.Id);
+            return NoContent();
+                          
+                       
         }
 
         [HttpPut]
         public async Task<ActionResult> Put(int id, [FromBody] Cliente cliente)
         {
             if (id == cliente.Id)
-                 return BadRequest();
-
-                await _clienteRepositories.Update(cliente);
-
+            {
+                return BadRequest();
+            }
+                
+            await _clienteRepositories.Update(cliente);
             return NoContent();
+        }
+
+        [HttpGet ("saldo")]
+        public IActionResult ObterSaldo(int id)
+        {
+            var cliente = _clienteRepositories.FirstOrDefault(c  => c.Id == id);
+            if (cliente == null)
+            {
+                return NotFound("Cliente não encontrado");
+            }
+            return Ok(cliente.Saldo);
         }
     }
 }

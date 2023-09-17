@@ -22,6 +22,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseEndpoints(Endpoint =>
+{
+Endpoint.MapControllerRoute(
+    name: "default",
+    pattern: "{controller}/{action/{id?}",
+    defaults: new { controller = "Home", Action = "Index" });
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

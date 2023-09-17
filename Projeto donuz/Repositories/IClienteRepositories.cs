@@ -10,5 +10,7 @@ namespace Projeto_donuz.Repositories
         Task<int> Create(Cliente cadastro);
         Task Update(Cliente cadastro);
         Task DeleteById(int id);
+        
+        
     }
 }
