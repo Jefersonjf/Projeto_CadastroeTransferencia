@@ -17,6 +17,5 @@ namespace Projeto_donuz.AppDbContex
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
             => optionsBuilder.UseSqlite(connectionString: "DataSource=app.db;Cache=shared");
 
-
     }
 }
