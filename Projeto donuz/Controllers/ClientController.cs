@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Projeto_donuz.Model;
 using Projeto_donuz.Repositories;
+using System.Linq;
 
 namespace Projeto_donuz.Controllers
 {
@@ -21,7 +22,7 @@ namespace Projeto_donuz.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> Get(int id)
+        public async Task<ActionResult<Cliente?>> Get(int id)
         {
             return await _clienteRepositories.GetById(id);
         }
@@ -56,20 +57,34 @@ namespace Projeto_donuz.Controllers
             {
                 return BadRequest();
             }
-                
+
+            var clientetoUpdate = await _clienteRepositories.GetById(id);
+
+            if (clientetoUpdate == null)
+            {
+                return NotFound("Cliente não encontrado.");
+            }
+
             await _clienteRepositories.Update(cliente);
             return NoContent();
         }
 
-        [HttpGet ("saldo")]
-        public IActionResult ObterSaldo(int id)
+        [HttpGet("saldo")]
+        public IActionResult GetSaldo(int clienteId)
         {
-            var cliente = _clienteRepositories.FirstOrDefault(c  => c.Id == id);
+            if (clienteId <= 0)
+            {
+                return BadRequest("ID de cliente inválido");
+            }
+
+            var cliente = _clienteRepositories.GetById(clienteId);
+
             if (cliente == null)
             {
                 return NotFound("Cliente não encontrado");
             }
-            return Ok(cliente.Saldo);
+
+            return Ok(cliente);
         }
     }
 }
