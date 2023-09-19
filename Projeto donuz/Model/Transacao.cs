@@ -2,7 +2,7 @@
 {
     public class Transacao
     {
-        public string? Id { get; set; }
+        public int Id { get; set; }
         public decimal Valor { get; set; }
         public DateTime? Date { get; set; }
         public TipoTransacao Tipo { get; set; }
