@@ -1,14 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Projeto_donuz.AppDbContex;
 using Projeto_donuz.Model;
+using System.Linq;
 
 namespace Projeto_donuz.Repositories
 {
     public class ClienteRepositories : IClienteRepositories
     {
 
-        public readonly ClienteContext _context;
+        public readonly AppDbContext _context;
 
-        public ClienteRepositories(ClienteContext context)
+        public ClienteRepositories(AppDbContext context)
         {
             _context = context;
         }
@@ -16,7 +18,7 @@ namespace Projeto_donuz.Repositories
        
         public async Task<int> Create(Cliente cadastro)
         {
-            var newCliente = _context.cadastros.Add(cadastro);
+            var newCliente = _context.Cadastros.Add(cadastro);
             await _context.SaveChangesAsync();
 
             return newCliente.Entity.Id;
@@ -25,20 +27,15 @@ namespace Projeto_donuz.Repositories
 
         public async Task DeleteById(int id)
         {
-            var DeleteById = await _context.cadastros.FindAsync(id);
-            _context.cadastros.Remove(DeleteById);
+            var DeleteById = await _context.Cadastros.FindAsync(id);
+            _context.Cadastros.Remove(DeleteById);
             await _context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Cliente>> Get()
         {
-           return await _context.cadastros.ToListAsync();
-        }
-
-        public async Task<Cliente> GetById(int id)
-        {
-            return await _context.cadastros.FindAsync(id);
-        }
+           return await _context.Cadastros.ToListAsync();
+        }                    
 
         public async Task Update(Cliente cadastro)
         {
@@ -46,5 +43,12 @@ namespace Projeto_donuz.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<Cliente?> GetById(int id)
+        {
+            var cliente = await _context.Cadastros.Where(s => s.Id == id).FirstOrDefaultAsync();
+
+            return cliente;
+
+        }
     }
 }

@@ -6,11 +6,10 @@ namespace Projeto_donuz.Repositories
     public interface IClienteRepositories
     {
         Task<IEnumerable<Cliente>> Get();
-        Task<Cliente> GetById(int id);
+        Task<Cliente?> GetById(int id);
         Task<int> Create(Cliente cadastro);
         Task Update(Cliente cadastro);
         Task DeleteById(int id);
         
-        
-    }
+    }  
 }
