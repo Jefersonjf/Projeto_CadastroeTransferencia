@@ -25,11 +25,16 @@ namespace Projeto_donuz.Repositories
             
         }
 
-        public async Task DeleteById(int id)
+        public async Task<bool> DeleteById(int id)
         {
             var DeleteById = await _context.Cadastros.FindAsync(id);
+            if (DeleteById == null) 
+                return false;
+
             _context.Cadastros.Remove(DeleteById);
             await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<IEnumerable<Cliente>> Get()
@@ -37,10 +42,23 @@ namespace Projeto_donuz.Repositories
            return await _context.Cadastros.ToListAsync();
         }                    
 
-        public async Task Update(Cliente cadastro)
+        public async Task<bool> Update(int id, Cliente cadastro)
         {
-            _context.Entry(cadastro).State = EntityState.Modified;
+            var findedCustomer = await _context.Cadastros.FirstOrDefaultAsync(c => c.Id == id);
+            if ( findedCustomer == null)
+            {
+                return false;
+            }
+            
+            findedCustomer.Name = cadastro.Name;
+            findedCustomer.CPF = cadastro.CPF; 
+            findedCustomer.Endereco = cadastro.Endereco;
+            findedCustomer.Telefone = cadastro.Telefone;
+            findedCustomer.Saldo = cadastro.Saldo;
+
             await _context.SaveChangesAsync();
+
+            return true;
         }
 
         public async Task<Cliente?> GetById(int id)
@@ -50,5 +68,12 @@ namespace Projeto_donuz.Repositories
             return cliente;
 
         }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        
     }
 }

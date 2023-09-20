@@ -8,8 +8,9 @@ namespace Projeto_donuz.Repositories
         Task<IEnumerable<Cliente>> Get();
         Task<Cliente?> GetById(int id);
         Task<int> Create(Cliente cadastro);
-        Task Update(Cliente cadastro);
-        Task DeleteById(int id);
-        
+        Task<bool> Update(int id, Cliente cadastro);
+        Task<bool> DeleteById(int id);
+        Task SaveChangesAsync();
+
     }  
 }
