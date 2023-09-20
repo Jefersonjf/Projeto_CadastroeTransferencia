@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Projeto donuz/app.db-shm
+/Projeto donuz/app.db-wal
