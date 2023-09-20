@@ -12,7 +12,7 @@ namespace Projeto_donuz.AppDbContex
 
         public DbSet<Cliente> Cadastros { get; set; }
 
-        public DbSet<Transacao> Transacao { get; set; }     
+        public DbSet<Transacao> Transacaos { get; set; }     
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
             => optionsBuilder.UseSqlite(connectionString: "DataSource=app.db;Cache=shared");
