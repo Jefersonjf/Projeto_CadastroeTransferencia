@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
 using Projeto_donuz.Model;
+using SQLitePCL;
 using System.Security.Cryptography.X509Certificates;
 using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
 
@@ -16,7 +17,7 @@ namespace Projeto_donuz.Controllers
             new Cliente { Id = 2, Name = "Cliente 2", Saldo = 500}
         };
 
-        
+
         [HttpPost("credito")]
         public IActionResult Creditar(int clienteId, decimal valor)
         {
@@ -41,6 +42,7 @@ namespace Projeto_donuz.Controllers
         public IActionResult Debitar(int clienteId, decimal valor)
         {
             var cliente = _cliente.FirstOrDefault(c => c.Id == clienteId);
+           
             if(cliente == null)
             {
                 return NotFound("Cliente não encontrado");
@@ -59,6 +61,7 @@ namespace Projeto_donuz.Controllers
                 Tipo = TipoTransacao.Debito
             };
             cliente.Transacaos.Add(transacao);
+            
             return Ok(transacao);
            
             

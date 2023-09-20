@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Projeto_donuz.InputModel;
 using Projeto_donuz.Model;
+using Projeto_donuz.NovaPasta2;
 using Projeto_donuz.Repositories;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Projeto_donuz.Controllers
 {
@@ -16,22 +19,77 @@ namespace Projeto_donuz.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Cliente>> Get()
+        public async Task<IEnumerable<ClienteViewModel>> Get()
         {
-            return await _clienteRepositories.Get();
+            var clientes = await _clienteRepositories.Get(); 
+
+            if(clientes == null)            
+                return Enumerable.Empty<ClienteViewModel>();
+
+            var clientesVM = clientes.Select(c => new ClienteViewModel
+            {
+                Name = c.Name,
+                CPF = c.CPF,
+                Endereco = c.Endereco,
+                Telefone = c.Telefone,
+                Email = c.Email,
+                Saldo = (decimal)c.Saldo
+            });
+
+            return clientesVM;
+            
+
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Cliente?>> Get(int id)
         {
-            return await _clienteRepositories.GetById(id);
+            var cliente =  await _clienteRepositories.GetById(id);
+
+            if(cliente == null) 
+                return NotFound("Id não localizado");
+
+            var clienteVM = new ClienteViewModel
+            {
+                Name = cliente.Name,
+                CPF = cliente.CPF,
+                Endereco = cliente.Endereco,
+                Telefone = cliente.Telefone,
+                Email = cliente.Email,
+                Saldo = (decimal)cliente.Saldo
+            };
+
+            return Ok(clienteVM);
         }
 
         [HttpPost]
-        public async Task<ActionResult<Cliente>> Post([FromBody] Cliente cliente)
+        public async Task<ActionResult<Cliente>> Post([FromBody] ClienteInputModel createModel)
         {
-            await _clienteRepositories.Create(cliente);
-            return Ok(cliente);
+            var customer = new Cliente(
+                createModel.Name,
+                createModel.CPF,
+                createModel.Endereco,
+                createModel.Telefone,
+                createModel.Email,
+                createModel.Saldo);
+
+            var createdCustomer = await _clienteRepositories.Create(customer);
+            
+            if (createdCustomer == null)
+                return NotFound("Clinte não foi criado");
+
+            var clienteVM = new ClienteViewModel
+            {
+                Name = customer.Name,
+                CPF = customer.CPF,
+                Endereco = customer.Endereco,
+                Telefone = customer.Telefone,
+                Email = customer.Email,
+                Saldo = (decimal)customer.Saldo
+                
+            };
+
+            return Ok(clienteVM);
         }
 
         [HttpDelete("{id}")]
@@ -39,25 +97,20 @@ namespace Projeto_donuz.Controllers
         {
             var clienteToDelete = await _clienteRepositories.GetById(id);
            
-            if (clienteToDelete != null)
+            if (clienteToDelete == null)
             {
                 return NotFound();
             }                    
 
             await _clienteRepositories.DeleteById(clienteToDelete.Id);
-            return NoContent();
+            return Ok("Cliente excluido com sucesso");
                           
                        
         }
 
         [HttpPut]
-        public async Task<ActionResult> Put(int id, [FromBody] Cliente cliente)
+        public async Task<ActionResult> Put([FromQuery] int id, [FromBody] ClienteInputModel clienteIM)
         {
-            if (id == cliente.Id)
-            {
-                return BadRequest();
-            }
-
             var clientetoUpdate = await _clienteRepositories.GetById(id);
 
             if (clientetoUpdate == null)
@@ -65,7 +118,14 @@ namespace Projeto_donuz.Controllers
                 return NotFound("Cliente não encontrado.");
             }
 
-            await _clienteRepositories.Update(cliente);
+            clientetoUpdate.Name = clienteIM.Name;
+            clientetoUpdate.CPF = clienteIM.CPF;
+            clientetoUpdate.Endereco = clienteIM.Endereco;
+            clientetoUpdate.Telefone = clienteIM.Telefone;
+            clientetoUpdate.Email = clienteIM.Email;
+            clientetoUpdate.Saldo = clienteIM.Saldo;
+
+            await _clienteRepositories.Update(id, clientetoUpdate);
             return NoContent();
         }
 
