@@ -1,70 +1,41 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Projeto_donuz.Model;
-using SQLitePCL;
-using System.Security.Cryptography.X509Certificates;
-using RouteAttribute = Microsoft.AspNetCore.Components.RouteAttribute;
+using Projeto_donuz.Repositories;
+using RouteAttribute = Microsoft.AspNetCore.Mvc.RouteAttribute;
 
 namespace Projeto_donuz.Controllers
 {
-    [Route("api/Transacoes")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class TransacoesController : ControllerBase
+    public class TransacaoController : ControllerBase
     {
-        private List<Cliente> _cliente = new List<Cliente>
+        private readonly ITransacaoRepository _transacaoRepository;
+
+        public TransacaoController(ITransacaoRepository transacaoRepository)
         {
-            new Cliente { Id = 1, Name = "Cliente 1", Saldo = 1000},
-            new Cliente { Id = 2, Name = "Cliente 2", Saldo = 500}
-        };
-
-
-        [HttpPost("credito")]
-        public IActionResult Creditar(int clienteId, decimal valor)
-        {
-            var cliente = _cliente.FirstOrDefault(c => c.Id == clienteId);
-            if (cliente == null)
-            {
-                return NotFound("Cliente não encontrado");
-            }
-
-            cliente.Saldo += valor;
-            var transacao = new Transacao
-            {
-                Valor = valor,
-                Date = DateTime.Now,
-                Tipo = TipoTransacao.Credito
-            };
-            cliente.Transacaos.Add(transacao);
-            return Ok(transacao);
+            _transacaoRepository = transacaoRepository;
         }
 
-        [HttpPost("debito")]
-        public IActionResult Debitar(int clienteId, decimal valor)
+        [HttpGet]
+        public IActionResult ObterTodasTransacoes()
         {
-            var cliente = _cliente.FirstOrDefault(c => c.Id == clienteId);
-           
-            if(cliente == null)
+            var transacoes = _transacaoRepository.ObterTodasTransacoes();
+            return Ok(transacoes);
+        }
+
+        [HttpPost]
+        public IActionResult AdicionarTransacao([FromBody] Transacao transacao)
+        {
+            if (transacao == null)
             {
-                return NotFound("Cliente não encontrado");
+                return BadRequest();
             }
 
-            if (cliente.Saldo < valor)
-            {
-                return BadRequest("Você não possue saldo suficiente para esta transação");
-            }
+            _transacaoRepository.AdicionarTransacao(transacao);
 
-            cliente.Saldo -= valor;
-            var transacao = new Transacao
-            {
-                Valor = valor,
-                Date = DateTime.Now,
-                Tipo = TipoTransacao.Debito
-            };
-            cliente.Transacaos.Add(transacao);
-            
-            return Ok(transacao);
-           
-            
+            return CreatedAtAction("ObterTodasTransacoes", new { id = transacao.Id }, transacao);
         }
     }
 }
