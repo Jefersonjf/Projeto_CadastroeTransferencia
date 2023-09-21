@@ -13,6 +13,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(x => x.UseSqlite("Data source = Projeto donuz"));
 builder.Services.AddScoped<IClienteRepositories, ClienteRepositories>();
+builder.Services.AddControllers();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+
 
 var app = builder.Build();
 
