@@ -10,6 +10,8 @@
   <ItemGroup>
     <Compile Remove="Controllers\TranferenciasController.cs" />
     <Compile Remove="Model\Transferencias.cs" />
+    <Compile Remove="Repositories\ITransactionRepository.cs" />
+    <Compile Remove="Repositories\TransactionRepository.cs" />
   </ItemGroup>
 
   <ItemGroup>
