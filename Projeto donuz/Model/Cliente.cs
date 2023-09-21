@@ -9,8 +9,13 @@
         public string Endereco { get; set; }
         public string Telefone { get; set; }
         public string Email { get; set; }
-        public decimal? Saldo { get; set; }
+        public decimal? Saldo { get; set; } = 0;
         public List<Transacao> Transacaos { get; set; } = new List<Transacao>();
+
+        public Cliente()
+        {
+                
+        }
 
         public Cliente(string name, string cpf, string endereco, string telefone, string email, decimal saldo)
         {
